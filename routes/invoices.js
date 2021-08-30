@@ -30,6 +30,17 @@ router.get('/:id', async(req,res, next) => {
     }
 })
 
+router.post('/', async(req, res, next) =>{
+    const comp_code = req.body.comp_code;
+    const amt = req.body.amt;
+    try {
+        const results = await db.query(`INSERT INTO invoices (comp_code, amt) VALUES ($1, $2) RETURNING id, comp_code, amt`, [comp_code, amt])
+        return res.status(201).json(results.rows[0]);
+    } catch(e) {
+        return next(e);
+    }
+})
+
 router.put('/:id', async(req, res, next) => {
     const id = req.params.id
     const amt = req.body.amt
@@ -39,7 +50,7 @@ router.put('/:id', async(req, res, next) => {
             throw new ExpressError(`No such invoice: ${id}`,404);
         } else {
             const invoice_results = await db.query(`SELECT id, comp_code, amt, paid, add_date, paid_date FROM invoices WHERE id=$1`, [id]);
-            return res.status(201).json(invoice_results.rows[0])
+            return res.status(200).json(invoice_results.rows[0])
         }
     } catch(e) {
         return next(e);

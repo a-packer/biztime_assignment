@@ -9,8 +9,6 @@ const db = require("../db");
 
 
 async function createData() {
-    await db.query("DELETE FROM invoices");
-    await db.query("DELETE FROM companies");
     await db.query("SELECT setval('invoices_id_seq', 1, false)");
   
     await db.query(`INSERT INTO companies (code, name, description)
@@ -28,6 +26,8 @@ async function createData() {
 
 // clean data before each test
 beforeEach(async () => {
+    await db.query("DELETE FROM invoices");
+    await db.query("DELETE FROM companies");
     await createData()
 })
 
